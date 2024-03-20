@@ -1,0 +1,2 @@
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst1.txt	0.0010309	816

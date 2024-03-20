@@ -1,4 +1,4 @@
-#define CHEMIN_DOSSIER_DONNEES "/Users/kergosien/Desktop/Cours Optim Discret/Conception itineraire Touristique/Format Etudiant Public/"
+#define CHEMIN_DOSSIER_DONNEES "../Format Etudiant Public/"
 #define NOM_FICHIER_LISTE_FICHIER_DONNEES "data.txt"
 #define NOM_FICHIER_LISTE_SORTIE "sortie.txt"
 
