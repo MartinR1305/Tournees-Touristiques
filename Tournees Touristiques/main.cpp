@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "Instance.h"
 #include "Solution.h"
+#include "Heuristiques.h"
 
 using namespace std;
 
@@ -83,8 +84,10 @@ int Resolution(Instance* instance)
     int i_val_Retour_Fct_obj = 0;
     Solution* uneSolution = new Solution();
     vector<int> v_i_tmp;
+    Heuristiques heuristique;
+    *uneSolution = heuristique.methode_Heuristique_V1(*instance);
 
-    /*INITIALISATION D'UN SOLUTION EN DUR*/
+    /*INITIALISATION D'UN SOLUTION EN DUR
     v_i_tmp.clear();
     uneSolution->v_Id_Hotel_Intermedaire.push_back(2);
     uneSolution->v_Date_Depart.push_back(0.0);
@@ -94,7 +97,7 @@ int Resolution(Instance* instance)
     v_i_tmp = { 24, 32, 40, 33, 25, 19, 26, 34, 41, 47, 52, 56, 59, 61 };
     uneSolution->v_v_Sequence_Id_Par_Jour.push_back(v_i_tmp);
     uneSolution->i_valeur_fonction_objectif = 816;
-    /* */
+     */
 
     uneSolution->Verification_Solution(instance);
 

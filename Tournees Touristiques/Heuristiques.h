@@ -1,12 +1,12 @@
 #include "Instance.h"
 #include "Solution.h"
-#ifndef Heuristiques_hpp
-#define Heuristiques_hpp
+#ifndef Heuristiques_h
+#define Heuristiques_h
 
 class Heuristiques
 {
 
-private:
+public:
 	Solution methode_Heuristique_V1(Instance Instance);
 
 };
