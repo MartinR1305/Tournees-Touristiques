@@ -84,8 +84,9 @@ int Resolution(Instance* instance)
     int i_val_Retour_Fct_obj = 0;
     Solution* uneSolution = new Solution();
     vector<int> v_i_tmp;
-    Heuristiques heuristique;
-    *uneSolution = heuristique.methode_Heuristique_V1(*instance);
+    Heuristiques* heuristique = new Heuristiques(instance, uneSolution);
+    *uneSolution = heuristique->methode_Heuristique_V1();
+    delete heuristique;
 
     /*INITIALISATION D'UN SOLUTION EN DUR
     v_i_tmp.clear();
@@ -98,6 +99,38 @@ int Resolution(Instance* instance)
     uneSolution->v_v_Sequence_Id_Par_Jour.push_back(v_i_tmp);
     uneSolution->i_valeur_fonction_objectif = 816;
      */
+    cout << "Distance entre H0 et P0 : " << instance->get_distance_Hotel_POI(0, 1) << endl;
+    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(1,4) << endl;
+    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(4, 10) << endl;
+    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(10, 11) << endl;
+    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(11, 13) << endl;
+    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(13, 22) << endl;
+    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(22, 23) << endl;
+    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(23, 31) << endl;
+    cout << "Distance entre H2 et P0 : " << instance->get_distance_Hotel_POI(2, 31) << endl;
+
+    cout << "Nombre de jour : " << instance->get_Nombre_Jour() << endl;
+    cout << "Hotel de depart : " << instance->get_Id_Hotel_depart() << endl;
+    cout << "Hotel d'arrive : " << instance->get_Id_Hotel_Arrivee() << endl;
+    cout << "Duree max J1 : " << instance->get_POI_Duree_Max_Voyage(0) << endl;
+    cout << "Duree max J2 : " << instance->get_POI_Duree_Max_Voyage(1) << endl << endl;
+
+    cout << "Hotel : ";
+    for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
+        cout << "[ " <<  uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
+    cout << endl;
+
+    cout << "POI : ";
+    for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
+        cout << "{ ";
+        for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
+            cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
+        }
+        cout << " } ";
+    }
+    cout << endl;
+
+    cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
 
     uneSolution->Verification_Solution(instance);
 
