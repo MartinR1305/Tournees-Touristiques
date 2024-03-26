@@ -99,15 +99,8 @@ int Resolution(Instance* instance)
     uneSolution->v_v_Sequence_Id_Par_Jour.push_back(v_i_tmp);
     uneSolution->i_valeur_fonction_objectif = 816;
      */
-    cout << "Distance entre H0 et P0 : " << instance->get_distance_Hotel_POI(0, 1) << endl;
-    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(1,4) << endl;
-    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(4, 10) << endl;
-    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(10, 11) << endl;
-    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(11, 13) << endl;
-    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(13, 22) << endl;
-    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(22, 23) << endl;
-    cout << "Distance entre H1 et P0 : " << instance->get_distance_POI_POI(23, 31) << endl;
-    cout << "Distance entre H2 et P0 : " << instance->get_distance_Hotel_POI(2, 31) << endl;
+
+    cout << "Heure Fermeture : " << instance->get_POI_Heure_fermeture(11) << endl <<endl;
 
     cout << "Nombre de jour : " << instance->get_Nombre_Jour() << endl;
     cout << "Hotel de depart : " << instance->get_Id_Hotel_depart() << endl;

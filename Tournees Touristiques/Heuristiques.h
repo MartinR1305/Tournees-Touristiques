@@ -24,7 +24,8 @@ public:
 	float calcul_Distance_Parcouru_Jour(int num_Jour, vector<int> vector_id_POI_Jour);
 
 	bool is_POI_Deja_Visite(int num_Jour, vector<int> vector_id_POI_Jour, int id_POI);
-	bool is_Data_Depart_OK(int num_Jour, int id_POI, int id_Hotel_Plus_Proche_POI_Courant);
+	bool is_Date_Depart_OK(int num_Jour, int id_POI, int id_Hotel_Plus_Proche_POI_Courant);
+	bool is_Date_Arrive_POI_OK(int id_POI, float distance_Parcouru_Jour, float distance_POI_Actuel_Et_POI_Courant);
 
 };
 
