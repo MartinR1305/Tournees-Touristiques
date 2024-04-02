@@ -108,24 +108,24 @@ int Resolution(Instance* instance)
 	// cout << "Duree max J1 : " << instance->get_POI_Duree_Max_Voyage(0) << endl;
 	// cout << "Duree max J2 : " << instance->get_POI_Duree_Max_Voyage(1) << endl << endl;
 
-	//cout << "Hotel : ";
-	//for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
-	//	cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
-	//cout << endl;
+	cout << "Hotel : ";
+	for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
+		cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
+	cout << endl;
 
-	//cout << "POI : ";
-	//for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
-	//	cout << "{ ";
-	//	for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
-	//		cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
-	//	}
-	//	cout << " } ";
-	//}
-	//cout << endl;
+	cout << "POI : ";
+	for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
+		cout << "{ ";
+		for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
+			cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
+		}
+		cout << " } ";
+	}
+	cout << endl;
 
-	//cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
+	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
 
-	uneSolution->Verification_Solution(instance);
+	//uneSolution->Verification_Solution(instance);
 
 	i_val_Retour_Fct_obj = uneSolution->i_valeur_fonction_objectif;
 	delete uneSolution;

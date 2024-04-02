@@ -121,6 +121,7 @@ Solution Heuristiques::methode_Heuristique_V1() {
 
 		// On ajoute le vector de POI.
 		solution->v_v_Sequence_Id_Par_Jour.push_back(vector_id_POI_Jour);
+		vector_id_POI_Jour.clear();
 	}
 	return *solution;
 }
