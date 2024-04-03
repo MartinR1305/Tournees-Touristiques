@@ -84,7 +84,7 @@ int Resolution(Instance* instance)
 	int i_val_Retour_Fct_obj = 0;
 	Solution* uneSolution = new Solution();
 	vector<int> v_i_tmp;
-	Heuristiques* heuristique = new Heuristiques(instance, uneSolution);
+	Heuristiques* heuristique = new Heuristiques(instance);
 	*uneSolution = heuristique->methode_Heuristique_V1();
 	delete heuristique;
 
