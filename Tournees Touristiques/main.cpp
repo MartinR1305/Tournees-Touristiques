@@ -125,7 +125,7 @@ int Resolution(Instance* instance)
 
 	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
 
-	//uneSolution->Verification_Solution(instance);
+	uneSolution->Verification_Solution(instance);
 
 	i_val_Retour_Fct_obj = uneSolution->i_valeur_fonction_objectif;
 	delete uneSolution;

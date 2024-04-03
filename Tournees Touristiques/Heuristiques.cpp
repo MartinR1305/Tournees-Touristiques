@@ -21,6 +21,7 @@ Solution Heuristiques::methode_Heuristique_V1() {
 	int nb_Hotel = instance->get_Nombre_Hotel();
 
 	for (int num_Jour = 0; num_Jour < nb_Jour; num_Jour++) {
+		cout << "Num Jour : " << num_Jour << endl << endl << endl;
 
 		float distance_Max_Jour_Actuel = instance->get_POI_Duree_Max_Voyage(num_Jour);
 
@@ -64,8 +65,13 @@ Solution Heuristiques::methode_Heuristique_V1() {
 			// On regarde si la d'arrivé au POI n'est pas supérieure à la date de fermeture du POI.
 			bool is_OK_Date_Arrive_POI = is_Date_Arrive_POI_OK(id_POI, distance_Parcouru_Jour, distance_POI_Actuel_Et_POI_Courant);
 
-			// On peut ajouter le POI si en le choisissant on peut aller à un hôtel par la suite, qu'il n'a pas déjà été visité, que la date de départ par défaut est possible et que l'on peut l'atteindre avant sa fermeture.
-			if ((distance_POI_Actuel_POI_Courant_Plus_Proche_Hotel <= distance_Max_Jour_Actuel - distance_Parcouru_Jour) && !is_POI_Present && is_OK_Date_Depart && is_OK_Date_Arrive_POI) {
+			bool is_OK_distance_Avec_Hotel_Arrive_Diminue = is_Distance_Avec_Hotel_Arrive_Diminue(num_Jour, vector_id_POI_Jour, id_POI);
+
+			//cout << "ID POI : " << id_POI << " | Dt. POI Act - POI Cou - H : " << distance_POI_Actuel_POI_Courant_Plus_Proche_Hotel << " | Dt. Rest : " << (distance_Max_Jour_Actuel - distance_Parcouru_Jour) << endl;
+			//cout << "\tPOI Present : " << is_POI_Present << " | Date Dep. OK : " << is_OK_Date_Depart << " | Date Arr. OK : " << is_OK_Date_Arrive_POI << " Dist. Dim : " << is_OK_distance_Avec_Hotel_Arrive_Diminue << endl;
+
+			// On peut ajouter le POI si en le choisissant on peut aller à un hôtel par la suite, qu'il n'a pas déjà été visité, que la date de départ par défaut est possible, que l'on peut l'atteindre avant sa fermeture et que la distance avec l'hotel d'arrivé diminue..
+			if ((distance_POI_Actuel_POI_Courant_Plus_Proche_Hotel <= distance_Max_Jour_Actuel - distance_Parcouru_Jour) && !is_POI_Present && is_OK_Date_Depart && is_OK_Date_Arrive_POI && is_OK_distance_Avec_Hotel_Arrive_Diminue) {
 
 				// On ajoute le POI.
 				vector_id_POI_Jour.push_back(id_POI);
@@ -82,33 +88,18 @@ Solution Heuristiques::methode_Heuristique_V1() {
 					// ID du 1er POI.
 					int id_1er_POI = vector_id_POI_Jour[0];
 
-					// Heure d'ouverture du 1er POI.
-					float heure_Ouverture_1er_POI = instance->get_POI_Heure_ouverture(id_1er_POI);
+					// Heure de fermeture du 1er POI.
+					float heure_Fermeture_1er_POI = instance->get_POI_Heure_fermeture(id_1er_POI);
 
 					// Si c'est pas le 1er jour.
 					if (num_Jour != 0) {
-						// Si la date prévu est positive.
-						if (heure_Ouverture_1er_POI - instance->get_distance_Hotel_POI(solution->v_Id_Hotel_Intermedaire[num_Jour - 1], id_1er_POI) >= 0) {
-							solution->v_Date_Depart.push_back(heure_Ouverture_1er_POI - instance->get_distance_Hotel_POI(solution->v_Id_Hotel_Intermedaire[num_Jour - 1], id_1er_POI));
-						}
+						solution->v_Date_Depart.push_back(heure_Fermeture_1er_POI - instance->get_distance_Hotel_POI(solution->v_Id_Hotel_Intermedaire[num_Jour - 1], id_1er_POI));
 
-						// Si la date prévu est négative.
-						else {
-							solution->v_Date_Depart.push_back(0);
-						}
 					}
 
 					// Si c'est le 1er jour.
 					else {
-						// Si la date prévu est positive.
-						if (heure_Ouverture_1er_POI - instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), id_1er_POI)) {
-							solution->v_Date_Depart.push_back(heure_Ouverture_1er_POI - instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), id_1er_POI));
-						}
-
-						// Si la date prévu est négative.
-						else {
-							solution->v_Date_Depart.push_back(0);
-						}
+						solution->v_Date_Depart.push_back(heure_Fermeture_1er_POI - instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), id_1er_POI));
 					}
 				}
 			}
@@ -218,12 +209,15 @@ bool Heuristiques::is_POI_Deja_Visite(int num_Jour, vector<int> vector_id_POI_Jo
 
 bool Heuristiques::is_Date_Depart_OK(int num_Jour, int id_POI, int id_Hotel_Plus_Proche_POI_Courant) {
 	if (num_Jour != 0) {
-		if (instance->get_POI_Heure_ouverture(id_POI) - instance->get_distance_Hotel_POI(id_Hotel_Plus_Proche_POI_Courant, id_POI) < 0) {
+		//cout << "ID POI : " << id_POI << " | Date de départ : " << (instance->get_POI_Heure_fermeture(id_POI) - instance->get_distance_Hotel_POI(id_Hotel_Plus_Proche_POI_Courant, id_POI)) << endl;
+		if (instance->get_POI_Heure_fermeture(id_POI) - instance->get_distance_Hotel_POI(id_Hotel_Plus_Proche_POI_Courant, id_POI) < 0) {
 			return false;
 		}
 	}
 	else {
-		if (instance->get_POI_Heure_ouverture(id_POI) - instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), id_POI) < 0) {
+		//cout << "ID POI : " << id_POI << " | Date de départ : " << (instance->get_POI_Heure_fermeture(id_POI) - instance->get_distance_Hotel_POI(id_Hotel_Plus_Proche_POI_Courant, id_POI)) << endl;
+
+		if (instance->get_POI_Heure_fermeture(id_POI) - instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), id_POI) < 0) {
 			return false;
 		}
 	}
@@ -231,9 +225,46 @@ bool Heuristiques::is_Date_Depart_OK(int num_Jour, int id_POI, int id_Hotel_Plus
 }
 
 bool Heuristiques::is_Date_Arrive_POI_OK(int id_POI, float distance_Parcouru_Jour, float distance_POI_Actuel_Et_POI_Courant) {
-	//cout << "ID POI : " << id_POI << " | D. Par. J : " << distance_Parcouru_Jour << " | D. POI Act - POI Cour : " << distance_POI_Actuel_Et_POI_Courant << " | Hor. O : " << instance->get_POI_Heure_ouverture(id_POI) << " | Hor. F : " << instance->get_POI_Heure_fermeture(id_POI) << endl;
+	cout << "ID POI : " << id_POI << " | D. Par. J : " << distance_Parcouru_Jour << " | D. POI Act - POI Cour : " << distance_POI_Actuel_Et_POI_Courant << " | Hor. O : " << instance->get_POI_Heure_ouverture(id_POI) << " | Hor. F : " << instance->get_POI_Heure_fermeture(id_POI) << endl;
+	
+	// AJOUTER DATE DEBUT
 	if (distance_Parcouru_Jour + distance_POI_Actuel_Et_POI_Courant > instance->get_POI_Heure_fermeture(id_POI)) {
 		return false;
 	}
 	return true;
+}
+
+bool Heuristiques::is_Distance_Avec_Hotel_Arrive_Diminue(int num_Jour, vector<int> vector_id_POI_Jour, int id_POI) {
+	float distance_POI_Actuel_Hotel_Arrive = 0;
+	float distance_POI_Courant_Hotel_Arrive = 0;
+
+	// Si l'on est sur un hôtel.
+	if (vector_id_POI_Jour.size() == 0) {
+		return true;
+		//// Si c'est le 1er jour.
+		//if (num_Jour == 0) {
+		//	distance_POI_Actuel_Hotel_Arrive = instance->get_distance_Hotel_Hotel(instance->get_Id_Hotel_depart(), instance->get_Id_Hotel_Arrivee());
+		//}
+
+		//// Si ce n'est pas le 1er jour.
+		//else {
+		//	distance_POI_Actuel_Hotel_Arrive = instance->get_distance_Hotel_Hotel(solution->v_Id_Hotel_Intermedaire[num_Jour - 1], instance->get_Id_Hotel_Arrivee());
+		//}
+	}
+
+	// Si l'on est sur un POI.
+	else {
+		distance_POI_Actuel_Hotel_Arrive = instance->get_distance_Hotel_POI(instance->get_Id_Hotel_Arrivee(), vector_id_POI_Jour[vector_id_POI_Jour.size() - 1]);
+	}
+
+	distance_POI_Courant_Hotel_Arrive = instance->get_distance_Hotel_POI(instance->get_Id_Hotel_Arrivee(), id_POI);
+
+	//cout << "ID : " << id_POI << " | Dist. Act-H : " << distance_POI_Actuel_Hotel_Arrive << " | Dist. Cour-H : " << distance_POI_Courant_Hotel_Arrive << endl;
+
+	// On regarde si la distance avec l'hôtel a augmentée.
+	if (distance_POI_Actuel_Hotel_Arrive > distance_POI_Courant_Hotel_Arrive) {
+		return true;
+	}
+
+	return false;
 }
