@@ -4,3 +4,20 @@
 ../Format Etudiant Public/Inst14.txt	0.146217	73
  Fichier données	 Tps de résolution 	 Best solution
  Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst13.txt	0.141237	52
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst9.txt	0.258107	348
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst11.txt	0.309603	372
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst11.txt	0.306195	402
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst11.txt	0.309626	318

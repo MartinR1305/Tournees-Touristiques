@@ -109,7 +109,7 @@ Solution Heuristiques::methode_Heuristique_V1() {
 
 					// Si c'est pas le 1er jour.
 					if (num_Jour != 0) {
-						solution->v_Date_Depart.push_back(heure_Fermeture_1er_POI - instance->get_distance_Hotel_POI(solution->v_Id_Hotel_Intermedaire[num_Jour - 1], id_1er_POI));
+						solution->v_Date_Depart.push_back( (heure_Fermeture_1er_POI - instance->get_distance_Hotel_POI(solution->v_Id_Hotel_Intermedaire[num_Jour - 1], id_1er_POI));
 
 					}
 
@@ -264,8 +264,8 @@ bool Heuristiques::is_Distance_Avec_Hotel_Arrive_Diminue(int nb_Jour, int num_Jo
 	}
 
 	if (num_Jour != nb_Jour - 1) {
-		cout << "Dist. Cour-H : " << (distance_POI_Courant_Hotel_Arrive) << " | Dist. Max-J : " << distance_Max_Jours << endl;
-		if (distance_POI_Courant_Hotel_Arrive + 4> distance_Max_Jours) {
+		cout << "Dist. Cour-H : " << (distance_POI_Courant_Hotel_Arrive + 20) << " | Dist. Max-J : " << distance_Max_Jours << endl;
+		if (distance_POI_Courant_Hotel_Arrive + 20 > distance_Max_Jours) {
 			return false;
 		}
 	}
