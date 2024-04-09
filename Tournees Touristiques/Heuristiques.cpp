@@ -72,13 +72,11 @@ Solution Heuristiques::methode_Heuristique_V1() {
 			cout << endl;
 
 			// On peut ajouter le POI si en le choisissant on peut aller à un hôtel par la suite, qu'il n'a pas déjà été visité, que l'on peut l'atteindre avant sa fermeture et que la distance avec l'hotel d'arrivé diminue..
-			if ((distance_POI_Actuel_POI_Courant_Plus_Proche_Hotel <= distance_Max_Jour_Actuel - distance_Parcouru_Jour) && !is_POI_Present && is_OK_Date_Arrive_POI && is_OK_distance_Avec_Hotel_Arrive_Diminue) {
+			if ((distance_POI_Actuel_POI_Courant_Plus_Proche_Hotel <= distance_Max_Jour_Actuel - distance_Parcouru_Jour) && !is_POI_Present && is_OK_Date_Arrive_POI) {
 
 				cout << endl;
 				cout << " ------------ " << endl;
 				cout << "On peut le prendre --> " << id_POI << endl;
-				cout << "Hotel le plus proche --> " << id_Hotel_Plus_Proche_POI_Courant << endl;
-				cout << "Dist. H-H : " << instance->get_distance_Hotel_Hotel(id_Hotel_Plus_Proche_POI_Courant, instance->get_Id_Hotel_Arrivee()) << endl;
 				cout << " ------------ " << endl;
 				cout << endl;
 
