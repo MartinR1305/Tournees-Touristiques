@@ -85,8 +85,7 @@ int Resolution(Instance* instance)
 	Solution* uneSolution = new Solution();
 	vector<int> v_i_tmp;
 	Heuristiques* heuristique = new Heuristiques(instance);
-	cout << "d : " << instance->get_distance_Hotel_POI(1,0) << endl;
-	*uneSolution = heuristique->methode_Heuristique_V1();
+	*uneSolution = heuristique->methode_Heuristique();
 	delete heuristique;
 
 	/*INITIALISATION D'UN SOLUTION EN DUR

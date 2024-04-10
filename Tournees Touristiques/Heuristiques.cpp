@@ -10,7 +10,7 @@ Heuristiques::Heuristiques(Instance* instance_Param) {
 	instance = instance_Param;
 }
 
-Solution Heuristiques::methode_Heuristique_V1() {
+Solution Heuristiques::methode_Heuristique() {
 	int id_Hotel_Dep = instance->get_Id_Hotel_depart();
 	int id_Hotel_Arr = instance->get_Id_Hotel_Arrivee();
 

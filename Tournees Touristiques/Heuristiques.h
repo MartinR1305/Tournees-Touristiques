@@ -15,7 +15,7 @@ public:
 	Heuristiques();
 	Heuristiques(Instance* instance_Param);
 
-	Solution methode_Heuristique_V1();
+	Solution methode_Heuristique();
 	// Faire le destructeur
 
 	float calcul_Distance_POI_Actuel_Et_POI_Courant(int num_Jour, vector<int>  vector_id_POI_Jour, int id_POI, Solution* solution);

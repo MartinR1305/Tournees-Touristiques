@@ -100,3 +100,6 @@
  Fichier données	 Tps de résolution 	 Best solution
  Fichier données	 Tps de résolution 	 Best solution
  Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst15.txt	0.601167	46
+ Fichier données	 Tps de résolution 	 Best solution

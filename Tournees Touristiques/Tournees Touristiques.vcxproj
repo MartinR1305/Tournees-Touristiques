@@ -142,11 +142,13 @@
     <ClCompile Include="Heuristiques.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MetaHeuristiques.cpp" />
     <ClCompile Include="Solution.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Heuristiques.h" />
     <ClInclude Include="Instance.h" />
+    <ClInclude Include="MetaHeuristiques.h" />
     <ClInclude Include="Solution.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
