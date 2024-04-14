@@ -151,12 +151,13 @@ float Heuristiques::calcul_Distance_POI_Actuel_Et_POI_Courant(int num_Jour, vect
 
 int Heuristiques::obtenir_Hotel(int num_Jour, vector<int>  vector_id_POI_Jour, int id_POI, float distance_POI_Actuel_Et_POI_Courant, float tps_Attente, float date_Depart, Solution* solution) {
 
+	float distance_Max_Jour_Actuel = instance->get_POI_Duree_Max_Voyage(num_Jour);
+	float distance_Parcouru_Jour = calcul_Distance_Parcouru_Jour(num_Jour, date_Depart, vector_id_POI_Jour, solution);
+
 	// Si c'est le dernier et que l'on doit obligatoirement rentrer à l'hôtel d'arrivé.
 	if (num_Jour == instance->get_Nombre_Jour() - 1) {
 		float distance_POI_Courant_Hotel = instance->get_distance_Hotel_POI(instance->get_Id_Hotel_Arrivee(), id_POI);
 		float distance_POI_Actuel_POI_Courant_Plus_Proche_Hotel = distance_POI_Actuel_Et_POI_Courant + tps_Attente + distance_POI_Courant_Hotel;
-		float distance_Parcouru_Jour = calcul_Distance_Parcouru_Jour(num_Jour, date_Depart, vector_id_POI_Jour, solution);
-		float distance_Max_Jour_Actuel = instance->get_POI_Duree_Max_Voyage(num_Jour);
 
 		cout << "ID POI : " << id_POI << endl;
 		cout << "\tDist. Prevu : " << distance_POI_Actuel_POI_Courant_Plus_Proche_Hotel << " | Dist. Restante : " << (distance_Max_Jour_Actuel - distance_Parcouru_Jour) << endl;
@@ -174,9 +175,6 @@ int Heuristiques::obtenir_Hotel(int num_Jour, vector<int>  vector_id_POI_Jour, i
 		int id_Hotel_Selected = -1;
 
 		float distance_Hotel_Selected_Hotel_Arrive = 100000;
-
-		float distance_Max_Jour_Actuel = instance->get_POI_Duree_Max_Voyage(num_Jour);
-		float distance_Parcouru_Jour = calcul_Distance_Parcouru_Jour(num_Jour, date_Depart, vector_id_POI_Jour, solution);
 
 		for (int id_Hotel = 0; id_Hotel < instance->get_Nombre_Hotel(); id_Hotel++) {
 
@@ -280,7 +278,6 @@ float Heuristiques::obtenir_Date_Depart(int id_POI, int num_Jour, float distance
 }
 
 bool Heuristiques::is_Date_Arrive_POI_OK(int num_Jour, int id_POI, float distance_Parcouru_Jour, float distance_POI_Actuel_Et_POI_Courant, float date_Depart) {
-	//cout << "ID POI : " << id_POI << " | D. Par. J : " << distance_Parcouru_Jour << " | D. POI Act - POI Cour : " << distance_POI_Actuel_Et_POI_Courant << " | Hor. O : " << instance->get_POI_Heure_ouverture(id_POI) << " | Hor. F : " << instance->get_POI_Heure_fermeture(id_POI) << endl;
 
 	if (date_Depart + distance_Parcouru_Jour + distance_POI_Actuel_Et_POI_Courant > instance->get_POI_Heure_fermeture(id_POI)) {
 		return false;

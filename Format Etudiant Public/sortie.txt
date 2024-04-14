@@ -499,3 +499,9 @@
 ../Format Etudiant Public/Inst16.txt	0.990299	122
  Fichier données	 Tps de résolution 	 Best solution
  Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst15.txt	0.0585509	74
+ Fichier données	 Tps de résolution 	 Best solution
+../Format Etudiant Public/Inst15.txt	0.211099	74
