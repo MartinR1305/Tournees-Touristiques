@@ -1,5 +1,5 @@
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include "Instance.h"
 #include "Solution.h"
 #include "Heuristiques.h"
@@ -20,8 +20,8 @@ public:
 
 	Solution methode_MetaHeuristiques();
 
-	map<Solution, vector<int>> generer_Voisinage(Solution solution);
-	Solution* get_Meilleure_Solution(map<Solution, vector<int>> voisinage, vector<vector<int>> liste_Tabou);
+	unordered_map<Solution, vector<int>> generer_Voisinage(Solution solution);
+	Solution* get_Meilleure_Solution(unordered_map<Solution, vector<int>> voisinage, vector<vector<int>> liste_Tabou);
 
 	void remplacer_Plus_Ancien_Mouvement(vector<vector<int>>* liste_Tabou, vector<int>* mouvement_Tabou);
 

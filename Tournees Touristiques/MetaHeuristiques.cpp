@@ -16,50 +16,50 @@ MetaHeuristiques::MetaHeuristiques(Instance* instance_Param) {
 Solution MetaHeuristiques::methode_MetaHeuristiques() {
 
 	Solution* solution = new Solution();
-	//Heuristiques* heuristique = new Heuristiques(instance);
+	Heuristiques* heuristique = new Heuristiques(instance);
 
-	//// Calcul de la solution initiale à partir de l'heuristique.
-	//*solution = heuristique->methode_Heuristique();
+	// Calcul de la solution initiale à partir de l'heuristique.
+	*solution = heuristique->methode_Heuristique();
 
-	//vector<vector<int>> liste_Tabou;
-	//int nb_Ite = 0;
+	vector<vector<int>> liste_Tabou;
+	int nb_Ite = 0;
 
-	//while (nb_Ite < NOMBRE_ITERATION) {
+	while (nb_Ite < NOMBRE_ITERATION) {
 
-	//	map<Solution, vector<int>> voisinage_Avec_Mouvement = generer_Voisinage(*solution);
-	//	Solution* meilleure_Solution = get_Meilleure_Solution(voisinage_Avec_Mouvement, liste_Tabou);
+		unordered_map<Solution, vector<int>> voisinage_Avec_Mouvement = generer_Voisinage(*solution);
+		Solution* meilleure_Solution = get_Meilleure_Solution(voisinage_Avec_Mouvement, liste_Tabou);
 
-	//	// On regarde si la meilleur solution n'était pas dans liste tabou.
-	//	if (meilleure_Solution != nullptr) {
+		// On regarde si la meilleur solution n'était pas dans liste tabou.
+		if (meilleure_Solution != nullptr) {
 
-	//		// On cherche le mouvement tabou associé à la meilleure solution.
-	//		auto it = voisinage_Avec_Mouvement.find(*meilleure_Solution);
-	//		vector<int> mouvement_Tabou = it->second;
+			// On cherche le mouvement tabou associé à la meilleure solution.
+			auto it = voisinage_Avec_Mouvement.find(*meilleure_Solution);
+			vector<int> mouvement_Tabou = it->second;
 
-	//		// On regarde si cette meilleur soluton  a une meilleur F.O que la solution.
-	//		if (meilleure_Solution->i_valeur_fonction_objectif > solution->i_valeur_fonction_objectif) {
+			// On regarde si cette meilleur soluton  a une meilleur F.O que la solution.
+			if (meilleure_Solution->i_valeur_fonction_objectif > solution->i_valeur_fonction_objectif) {
 
-	//			// Si la liste tabou n'est pas pleine.
-	//			if (liste_Tabou.size() < TAILLE_LISTE_TABOU) {
-	//				liste_Tabou.push_back(mouvement_Tabou);
-	//			}
+				// Si la liste tabou n'est pas pleine.
+				if (liste_Tabou.size() < TAILLE_LISTE_TABOU) {
+					liste_Tabou.push_back(mouvement_Tabou);
+				}
 
-	//			// Si la liste tabou est pleine.
-	//			else {
-	//				remplacer_Plus_Ancien_Mouvement(&liste_Tabou, &mouvement_Tabou);
-	//			}
+				// Si la liste tabou est pleine.
+				else {
+					remplacer_Plus_Ancien_Mouvement(&liste_Tabou, &mouvement_Tabou);
+				}
 
-	//			// On prends donc la meilleur solution.
-	//			solution = meilleure_Solution;
-	//		}
-	//	}
-	//}
+				// On prends donc la meilleur solution.
+				solution = meilleure_Solution;
+			}
+		}
+	}
 	return *solution;
 }
 
-map<Solution, vector<int>> MetaHeuristiques::generer_Voisinage(Solution solution) {
+unordered_map<Solution, vector<int>> MetaHeuristiques::generer_Voisinage(Solution solution) {
 
-	map<Solution, vector<int>> voisinage;
+	unordered_map<Solution, vector<int>> voisinage;
 
 	// On parcours tous les jours.
 	for (int num_Jour = 0; num_Jour < instance->get_Nombre_Jour() - 1 ; num_Jour++) {
@@ -83,7 +83,7 @@ map<Solution, vector<int>> MetaHeuristiques::generer_Voisinage(Solution solution
 					vector<int> mouvement = { 0 , solution.v_Id_Hotel_Intermedaire[num_Jour] , id_Hotel , num_Jour };
 
 					// On ajoute la solution avec son mouvement associé.
-					voisinage.emplace(pair<Solution, vector<int>>(solution_Temporaire, mouvement));
+					voisinage.insert(pair<Solution, vector<int>>(solution_Temporaire, mouvement));
 				}
 			}
 		}
@@ -97,7 +97,7 @@ map<Solution, vector<int>> MetaHeuristiques::generer_Voisinage(Solution solution
 	return voisinage;
 }
 
-Solution* MetaHeuristiques::get_Meilleure_Solution(map<Solution, vector<int>> voisinage, vector<vector<int>> liste_Tabou) {
+Solution* MetaHeuristiques::get_Meilleure_Solution(unordered_map<Solution, vector<int>> voisinage, vector<vector<int>> liste_Tabou) {
 
 	int meilleur_FO = -1;
 	Solution meilleure_Solution;
