@@ -20,8 +20,10 @@ public:
 
 	Solution methode_MetaHeuristiques();
 
-	map<Solution, vector<int>> generer_Voisinage();
-	Solution* get_Meilleur_Solution(map<Solution, vector<int>> voisinage, vector<vector<int>> liste_Tabou);
+	map<Solution, vector<int>> generer_Voisinage(Solution solution);
+	Solution* get_Meilleure_Solution(map<Solution, vector<int>> voisinage, vector<vector<int>> liste_Tabou);
+
+	void remplacer_Plus_Ancien_Mouvement(vector<vector<int>>* liste_Tabou, vector<int>* mouvement_Tabou);
 
 };
 
