@@ -101,22 +101,24 @@ int Resolution(Instance* instance)
 	uneSolution->i_valeur_fonction_objectif = 816;
 	 */
 
-	//cout << "Hotel : ";
-	//for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
-	//	cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
-	//cout << endl;
+	cout << "Solution heuristique : " << endl;
 
-	//cout << "POI : ";
-	//for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
-	//	cout << "{ ";
-	//	for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
-	//		cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
-	//	}
-	//	cout << " } ";
-	//}
-	//cout << endl;
+	cout << "Hotel : ";
+	for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
+		cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
+	cout << endl;
 
-	//cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
+	cout << "POI : ";
+	for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
+		cout << "{ ";
+		for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
+			cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
+		}
+		cout << " } ";
+	}
+	cout << endl;
+
+	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
 
 	uneSolution->Verification_Solution(instance);
 
@@ -125,39 +127,28 @@ int Resolution(Instance* instance)
 
 	MetaHeuristiques* metaheuristique = new MetaHeuristiques(instance);
 
-	// On génère le voisinage à partir de la solution.
-	metaheuristique->generer_Voisinage(*uneSolution, &solution_Voisinage, &mouvement_Voisinage);
+	*uneSolution = metaheuristique->methode_MetaHeuristiques();
 
-	for (int solutionV = 0; solutionV < solution_Voisinage.size(); solutionV++) {
+	cout << "Solution metaheuristique : " << endl;
 
-		cout << "Voisinage num : " << solutionV << endl;
+	cout << "Hotel : ";
+	for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
+		cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
+	cout << endl;
 
-		//for (int i = 0; i < solution_Voisinage[solutionV].v_Id_Hotel_Intermedaire.size(); i++) {
-		//	cout << "[ " << solution_Voisinage[solutionV].v_Id_Hotel_Intermedaire[i] << " ]";
-		//}
-
-		for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
-			cout << "{ ";
-			for (int j = 0; j < solution_Voisinage[solutionV].v_v_Sequence_Id_Par_Jour[i].size(); j++) {
-				cout << "[ " << solution_Voisinage[solutionV].v_v_Sequence_Id_Par_Jour[i][j] << " ]";
-			}
-			cout << " } ";
+	cout << "POI : ";
+	for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
+		cout << "{ ";
+		for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
+			cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
 		}
-
-		cout << "\tMouvement : ";
-
-		for (int j = 0; j < mouvement_Voisinage[solutionV].size(); j++) {
-			cout << mouvement_Voisinage[solutionV][j] << " ";
-		}
-
-		cout << "\tF.O :" << solution_Voisinage[solutionV].i_valeur_fonction_objectif;
-
-		cout << endl;
+		cout << " } ";
 	}
+	cout << endl;
 
-	vector<vector<int>> liste_Tabou;
-	int id_Meilleure_Solution = metaheuristique->get_Indice_Meilleure_Solution(solution_Voisinage, mouvement_Voisinage, liste_Tabou);
-	cout << "ID : Meilleure solution voisine : " << id_Meilleure_Solution << endl;
+	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
+
+	*uneSolution = metaheuristique->generer_Solution_Aleatoire();
 
 	i_val_Retour_Fct_obj = uneSolution->i_valeur_fonction_objectif;
 	delete uneSolution;

@@ -1,8 +1,9 @@
 #include <iostream>
-#include <unordered_map>
+#include <random>
 #include "Instance.h"
 #include "Solution.h"
 #include "Heuristiques.h"
+
 #ifndef MetaHeuristiques_h
 #define MetaHeuristiques_h
 
@@ -27,7 +28,9 @@ public:
 
 	int get_Indice_Meilleure_Solution(vector<Solution> solution_Voisinage, vector<vector<int>> mouvement_Voisinage, vector<vector<int>> liste_Tabou);
 
-	void remplacer_Plus_Ancien_Mouvement(vector<vector<int>>* liste_Tabou, vector<int>* mouvement_Tabou);
+	void remplacer_Plus_Ancien_Mouvement(vector<vector<int>>* liste_Tabou, vector<int> mouvement_Tabou);
+
+	Solution generer_Solution_Aleatoire();
 
 };
 
