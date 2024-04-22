@@ -1,7 +1,6 @@
 #include "MetaHeuristiques.h"
 
-#define NOMBRE_ITERATION 50
-#define TAILLE_LISTE_TABOU 100
+#define NB_MINUTES 3
 
 // Constructeur par défaut.
 MetaHeuristiques::MetaHeuristiques() {
@@ -22,67 +21,91 @@ Solution MetaHeuristiques::methode_MetaHeuristiques() {
 	meilleure_Solution = heuristique->methode_Heuristique();
 
 	vector<vector<int>> liste_Tabou;
+	vector<Solution> solution_Voisinage;
+
 	int nb_Ite = 0;
+	int indice_Meilleure_Solution = -1;
+	int taille_Liste_Tabou = 5000;
 
 	Solution solution_Actuel;
 	solution_Actuel = meilleure_Solution;
 
-	while (nb_Ite < NOMBRE_ITERATION) {
+	// Durée maximale (3 minutes)
+	auto start = chrono::steady_clock::now();
+	auto max_duration = chrono::minutes(NB_MINUTES);
 
-		vector<Solution> solution_Voisinage;
+	int ite_Pas_Ameliorer = 0;
+
+	while (true) {
+
+		// Calcul du temps écoulé
+		auto current = chrono::steady_clock::now();
+		auto duration = chrono::duration_cast<chrono::milliseconds>(current - start);
+
+		// Sortir de la boucle si 1 minute est écoulée
+		if (duration >= max_duration) {
+			break;
+		}
+
+		solution_Voisinage.clear();
 		vector<vector<int>> mouvement_Voisinage;
 
 		// On génère le voisinage à partir de la solution.
 		generer_Voisinage(solution_Actuel, &solution_Voisinage, &mouvement_Voisinage);
 
 		// On cherche la meilleure solution qui n'est pas dans la liste tabou.
-		int indice_Meilleure_Solution = get_Indice_Meilleure_Solution(solution_Voisinage, mouvement_Voisinage, liste_Tabou);
+		indice_Meilleure_Solution = get_Indice_Meilleure_Solution(solution_Voisinage, mouvement_Voisinage, liste_Tabou);
 
-		// On regarde si la meilleur solution n'était pas dans liste tabou.
+		// On regarde si il existe une meilleure solution dans le voisinage qui n'est pas dans la liste tabou.
 		if (indice_Meilleure_Solution != -1) {
 
-			cout << "Hotel : ";
-			for (int i = 0; i < solution_Voisinage[indice_Meilleure_Solution].v_Id_Hotel_Intermedaire.size(); i++)
-				cout << "[ " << solution_Voisinage[indice_Meilleure_Solution].v_Id_Hotel_Intermedaire[i] << " ]";
-			cout << endl;
-
-			cout << "POI : ";
-			for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
-				cout << "{ ";
-				for (int j = 0; j < solution_Voisinage[indice_Meilleure_Solution].v_v_Sequence_Id_Par_Jour[i].size(); j++) {
-					cout << "[ " << solution_Voisinage[indice_Meilleure_Solution].v_v_Sequence_Id_Par_Jour[i][j] << " ]";
-				}
-				cout << " } ";
-			}
-			cout << endl;
 
 			cout << "V : " << solution_Voisinage[indice_Meilleure_Solution].i_valeur_fonction_objectif << " | M : " << meilleure_Solution.i_valeur_fonction_objectif << endl << endl;
+
+			// Si la liste tabou n'est pas pleine.
+			if (liste_Tabou.size() < taille_Liste_Tabou) {
+				liste_Tabou.push_back(mouvement_Voisinage[indice_Meilleure_Solution]);
+			}
+
+			// Si la liste tabou est pleine.
+			else {
+				remplacer_Plus_Ancien_Mouvement(&liste_Tabou, mouvement_Voisinage[indice_Meilleure_Solution]);
+			}
+
 			// On regarde si cette meilleure soluton a une meilleur F.O que la solution.
 			if (solution_Voisinage[indice_Meilleure_Solution].i_valeur_fonction_objectif > meilleure_Solution.i_valeur_fonction_objectif) {
-
-				// Si la liste tabou n'est pas pleine.
-				if (liste_Tabou.size() < TAILLE_LISTE_TABOU) {
-					liste_Tabou.push_back(mouvement_Voisinage[indice_Meilleure_Solution]);
-				}
-
-				// Si la liste tabou est pleine.
-				else {
-					remplacer_Plus_Ancien_Mouvement(&liste_Tabou, mouvement_Voisinage[indice_Meilleure_Solution]);
-				}
 
 				// On prends donc la meilleur solution.
 				meilleure_Solution = solution_Voisinage[indice_Meilleure_Solution];
 				solution_Actuel = meilleure_Solution;
+
+				// Phase d'intensification.
+				taille_Liste_Tabou = 100;
+				liste_Tabou.clear();
+				ite_Pas_Ameliorer = 0;
 			}
 
 			// Cas où la meilleure solution du voisinage n'a pas une meilleure F.O que la solution.
 			else {
-				solution_Actuel = generer_Solution_Aleatoire();
+				ite_Pas_Ameliorer++;
+				cout << ite_Pas_Ameliorer << endl;
+				if (ite_Pas_Ameliorer > 1000) {
+
+					// Phase de diversification.
+					solution_Actuel = generer_Solution_Aleatoire();
+					ite_Pas_Ameliorer = 0;
+					taille_Liste_Tabou = 5000;
+				}
+				else {
+					solution_Actuel = solution_Voisinage[indice_Meilleure_Solution];
+				}
 			}
 		}
 
 		else {
-			cout << "Mouvement dans la liste tabou." << endl;
+
+			// ?
+			solution_Actuel = generer_Solution_Aleatoire();
 		}
 
 
@@ -299,20 +322,24 @@ int MetaHeuristiques::get_Indice_Meilleure_Solution(vector<Solution> solution_Vo
 	for (int indice_Solution_Voisine = 0; indice_Solution_Voisine < solution_Voisinage.size(); indice_Solution_Voisine++) {
 
 		// On cherche la solution avec la meilleure F.O.
-		if (solution_Voisinage[indice_Solution_Voisine].i_valeur_fonction_objectif > meilleur_FO) {
+		if (solution_Voisinage[indice_Solution_Voisine].i_valeur_fonction_objectif > meilleur_FO && !is_Mouvement_Dans_Liste_Tabou(mouvement_Voisinage[indice_Solution_Voisine], liste_Tabou)) {
 			meilleur_FO = solution_Voisinage[indice_Solution_Voisine].i_valeur_fonction_objectif;
 			indice_Meilleure_Solution = indice_Solution_Voisine;
 		}
 	}
 
-	// On regarde si le mouvement est dans la liste tabou ou pas.
-	for (vector<int> mouvement : liste_Tabou) {
-		// size == 2 --> Mouvement ajout POI.
-		if (mouvement == mouvement_Voisinage[indice_Meilleure_Solution] && mouvement_Voisinage[indice_Meilleure_Solution].size() != 2) {
-			indice_Meilleure_Solution - 1;
-			break;
+	return indice_Meilleure_Solution;
+}
+
+bool MetaHeuristiques::is_Mouvement_Dans_Liste_Tabou(vector<int> mouvement, vector<vector<int>> liste_Tabou) {
+	
+	// On parcours tous les mouvements de la liste tabou.
+	for (vector<int> mouvement_Tabou : liste_Tabou) {
+
+		// On regarde si ce mouvement est le même que le mouvement en paramètre.
+		if (mouvement == mouvement_Tabou && mouvement.size() != 2) {
+			return true;
 		}
 	}
-
-	return indice_Meilleure_Solution;
+	return false;
 }

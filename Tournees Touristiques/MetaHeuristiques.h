@@ -1,5 +1,7 @@
 #include <iostream>
 #include <random>
+#include <algorithm>
+#include <chrono>
 #include "Instance.h"
 #include "Solution.h"
 #include "Heuristiques.h"
@@ -31,6 +33,9 @@ public:
 	void remplacer_Plus_Ancien_Mouvement(vector<vector<int>>* liste_Tabou, vector<int> mouvement_Tabou);
 
 	Solution generer_Solution_Aleatoire();
+
+	bool is_Mouvement_Dans_Liste_Tabou(vector<int> mouvement, vector<vector<int>> liste_Tabou);
+	bool is_Solution_Prec_Egale(Solution solution_Precedente, vector<Solution> solution_Voisinage, int indice_Meilleure_Solution);
 
 };
 
