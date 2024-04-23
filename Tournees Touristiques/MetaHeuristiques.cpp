@@ -34,7 +34,7 @@ Solution MetaHeuristiques::methode_MetaHeuristiques() {
 	auto start = chrono::steady_clock::now();
 	auto max_duration = chrono::minutes(NB_MINUTES);
 
-	int ite_Pas_Ameliorer = 0;
+	int ite_Pas_Divers_Trajet = 0;
 
 	while (true) {
 
@@ -80,22 +80,25 @@ Solution MetaHeuristiques::methode_MetaHeuristiques() {
 				solution_Actuel = meilleure_Solution;
 
 				// Phase d'intensification.
-				taille_Liste_Tabou = 100;
+				taille_Liste_Tabou = 1000;
 				liste_Tabou.clear();
-				ite_Pas_Ameliorer = 0;
+				ite_Pas_Divers_Trajet = 0;
 			}
 
 			// Cas où la meilleure solution du voisinage n'a pas une meilleure F.O que la solution.
 			else {
-				ite_Pas_Ameliorer++;
-				cout << ite_Pas_Ameliorer << endl;
-				if (ite_Pas_Ameliorer > 1000) {
+				ite_Pas_Divers_Trajet++;
 
-					// Phase de diversification.
-					solution_Actuel = generer_Solution_Aleatoire();
-					ite_Pas_Ameliorer = 0;
-					taille_Liste_Tabou = 5000;
+				cout << "Trj" << ite_Pas_Divers_Trajet << endl;
+
+				if (ite_Pas_Divers_Trajet > 25) {
+
+					// Phase de diversification moyenne.
+					solution_Actuel = generer_Solution_Random_Trajet_Min(solution_Voisinage[indice_Meilleure_Solution]);
+					ite_Pas_Divers_Trajet = 0;
+					taille_Liste_Tabou = 7000;
 				}
+
 				else {
 					solution_Actuel = solution_Voisinage[indice_Meilleure_Solution];
 				}
@@ -104,14 +107,78 @@ Solution MetaHeuristiques::methode_MetaHeuristiques() {
 
 		else {
 
-			// ?
+			// Phase de diversification totale.
 			solution_Actuel = generer_Solution_Aleatoire();
+			ite_Pas_Divers_Trajet = 0;
+			taille_Liste_Tabou = 10000;
 		}
-
 
 		nb_Ite++;
 	}
 	return meilleure_Solution;
+}
+
+Solution MetaHeuristiques::generer_Solution_Random_Trajet_Min(Solution solution) {
+
+	int num_Jour_Score_Min = -1;
+	int score_Min_Jour = 10000;
+
+	for (int num_Jour = 0; num_Jour < instance->get_Nombre_Jour(); num_Jour++) {
+
+		int score_Jour = 0;
+
+		for (int indice_POI = 0; indice_POI < solution.v_v_Sequence_Id_Par_Jour[num_Jour].size(); indice_POI++) {
+			score_Jour += instance->get_POI_Score(solution.v_v_Sequence_Id_Par_Jour[num_Jour][indice_POI]);
+		}
+
+		if (score_Jour < score_Min_Jour) {
+			score_Min_Jour = score_Jour;
+			num_Jour_Score_Min = num_Jour;
+		}
+	}
+
+	Solution solution_Modif;
+	solution_Modif = solution;
+
+	for (int indice_POI = 0; indice_POI < solution_Modif.v_v_Sequence_Id_Par_Jour[num_Jour_Score_Min].size(); indice_POI++) {
+		solution_Modif.i_valeur_fonction_objectif -= instance->get_POI_Score(solution_Modif.v_v_Sequence_Id_Par_Jour[num_Jour_Score_Min][indice_POI]);
+	}
+
+	for (int id_POI = 0; id_POI < instance->get_Nombre_POI(); id_POI++) {
+		solution_Modif.v_Date_Depart.erase(solution_Modif.v_Date_Depart.begin() + num_Jour_Score_Min);
+		solution_Modif.v_v_Sequence_Id_Par_Jour.erase(solution_Modif.v_v_Sequence_Id_Par_Jour.begin() + num_Jour_Score_Min);
+
+		// Ajout du POI.
+		vector<int> vector_id_POI_Jour;
+		vector_id_POI_Jour.push_back(id_POI);
+		solution_Modif.v_v_Sequence_Id_Par_Jour.insert(solution_Modif.v_v_Sequence_Id_Par_Jour.begin() + num_Jour_Score_Min, vector_id_POI_Jour);
+
+		float heure_Ouverture = instance->get_POI_Heure_ouverture(vector_id_POI_Jour[0]);
+		float heure_Fermeture = instance->get_POI_Heure_fermeture(vector_id_POI_Jour[0]);
+
+		float distance_POI_Actuel_Et_POI_Courant;
+
+		if (num_Jour_Score_Min != 0) {
+			distance_POI_Actuel_Et_POI_Courant = instance->get_distance_Hotel_POI(solution_Modif.v_Id_Hotel_Intermedaire[num_Jour_Score_Min - 1], vector_id_POI_Jour[0]);
+		}
+		else {
+			distance_POI_Actuel_Et_POI_Courant = instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), vector_id_POI_Jour[0]);
+		}
+
+		// Ajout de la date de départ.
+		if (heure_Ouverture - distance_POI_Actuel_Et_POI_Courant >= 0) {
+			solution_Modif.v_Date_Depart.insert(solution_Modif.v_Date_Depart.begin() + num_Jour_Score_Min, heure_Ouverture - distance_POI_Actuel_Et_POI_Courant);
+		}
+		else {
+			solution_Modif.v_Date_Depart.insert(solution_Modif.v_Date_Depart.begin() + num_Jour_Score_Min, heure_Fermeture - distance_POI_Actuel_Et_POI_Courant);
+		}
+
+		// MAJ de la F.O.
+		solution_Modif.i_valeur_fonction_objectif += instance->get_POI_Score(vector_id_POI_Jour[0]);
+
+		if (!solution_Modif.Verification_Solution(instance));
+			return solution_Modif;
+		}
 }
 
 Solution MetaHeuristiques::generer_Solution_Aleatoire() {
@@ -139,37 +206,41 @@ Solution MetaHeuristiques::generer_Solution_Aleatoire() {
 		// Ajout des POIs aléatoire.
 		for (int num_Jour = 0; num_Jour < instance->get_Nombre_Jour(); num_Jour++) {
 
-			// Ajout du POI.
-			vector<int> vector_id_POI_Jour;
-			vector_id_POI_Jour.push_back(dis_POI(gen));
-			solution_Aleatoire.v_v_Sequence_Id_Par_Jour.push_back(vector_id_POI_Jour);
-
-			float heure_Ouverture = instance->get_POI_Heure_ouverture(vector_id_POI_Jour[0]);
-			float heure_Fermeture = instance->get_POI_Heure_fermeture(vector_id_POI_Jour[0]);
-
-			float distance_POI_Actuel_Et_POI_Courant;
-
-			if (num_Jour != 0) {
-				distance_POI_Actuel_Et_POI_Courant = instance->get_distance_Hotel_POI(solution_Aleatoire.v_Id_Hotel_Intermedaire[num_Jour - 1], vector_id_POI_Jour[0]);
-			}
-			else {
-				distance_POI_Actuel_Et_POI_Courant = instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), vector_id_POI_Jour[0]);
-			}
-
-			// Ajout de la date de départ.
-			if (heure_Ouverture - distance_POI_Actuel_Et_POI_Courant >= 0) {
-				solution_Aleatoire.v_Date_Depart.push_back(heure_Ouverture - distance_POI_Actuel_Et_POI_Courant);
-			}
-			else {
-				solution_Aleatoire.v_Date_Depart.push_back(heure_Fermeture - distance_POI_Actuel_Et_POI_Courant);
-			}
-
-			// MAJ de la F.O.
-			solution_Aleatoire.i_valeur_fonction_objectif += instance->get_POI_Score(vector_id_POI_Jour[0]);
+			ajouter_POI_Solution();
 		}
 	}
 
 	return solution_Aleatoire;
+}
+
+void MetaHeuristiques::ajouter_POI_Solution() {
+
+	vector<int> vector_id_POI_Jour;
+	vector_id_POI_Jour.push_back(dis_POI(gen));
+	solution_Aleatoire.v_v_Sequence_Id_Par_Jour.push_back(vector_id_POI_Jour);
+
+	float heure_Ouverture = instance->get_POI_Heure_ouverture(vector_id_POI_Jour[0]);
+	float heure_Fermeture = instance->get_POI_Heure_fermeture(vector_id_POI_Jour[0]);
+
+	float distance_POI_Actuel_Et_POI_Courant;
+
+	if (num_Jour != 0) {
+		distance_POI_Actuel_Et_POI_Courant = instance->get_distance_Hotel_POI(solution_Aleatoire.v_Id_Hotel_Intermedaire[num_Jour - 1], vector_id_POI_Jour[0]);
+	}
+	else {
+		distance_POI_Actuel_Et_POI_Courant = instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), vector_id_POI_Jour[0]);
+	}
+
+	// Ajout de la date de départ.
+	if (heure_Ouverture - distance_POI_Actuel_Et_POI_Courant >= 0) {
+		solution_Aleatoire.v_Date_Depart.push_back(heure_Ouverture - distance_POI_Actuel_Et_POI_Courant);
+	}
+	else {
+		solution_Aleatoire.v_Date_Depart.push_back(heure_Fermeture - distance_POI_Actuel_Et_POI_Courant);
+	}
+
+	// MAJ de la F.O.
+	solution_Aleatoire.i_valeur_fonction_objectif += instance->get_POI_Score(vector_id_POI_Jour[0]);
 }
 
 void MetaHeuristiques::remplacer_Plus_Ancien_Mouvement(vector<vector<int>>* liste_Tabou, vector<int> mouvement_Tabou) {
@@ -332,12 +403,12 @@ int MetaHeuristiques::get_Indice_Meilleure_Solution(vector<Solution> solution_Vo
 }
 
 bool MetaHeuristiques::is_Mouvement_Dans_Liste_Tabou(vector<int> mouvement, vector<vector<int>> liste_Tabou) {
-	
+
 	// On parcours tous les mouvements de la liste tabou.
 	for (vector<int> mouvement_Tabou : liste_Tabou) {
 
 		// On regarde si ce mouvement est le même que le mouvement en paramètre.
-		if (mouvement == mouvement_Tabou && mouvement.size() != 2) {
+		if (mouvement == mouvement_Tabou) {
 			return true;
 		}
 	}

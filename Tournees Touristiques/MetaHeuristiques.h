@@ -33,10 +33,11 @@ public:
 	void remplacer_Plus_Ancien_Mouvement(vector<vector<int>>* liste_Tabou, vector<int> mouvement_Tabou);
 
 	Solution generer_Solution_Aleatoire();
+	Solution generer_Solution_Random_Trajet_Min(Solution solution);
 
 	bool is_Mouvement_Dans_Liste_Tabou(vector<int> mouvement, vector<vector<int>> liste_Tabou);
-	bool is_Solution_Prec_Egale(Solution solution_Precedente, vector<Solution> solution_Voisinage, int indice_Meilleure_Solution);
 
+	void ajouter_POI_Solution();
 };
 
 #endif

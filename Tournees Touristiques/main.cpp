@@ -118,12 +118,15 @@ int Resolution(Instance* instance)
 	}
 	cout << endl;
 
+	cout << "Date Dep : ";
+	for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
+		cout << "[ " << uneSolution->v_Date_Depart[i] << " ]";
+	}
+	cout << endl;
+	cout << "Taille : " << uneSolution->v_v_Sequence_Id_Par_Jour.size() << endl;
 	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
 
 	uneSolution->Verification_Solution(instance);
-
-	vector<Solution> solution_Voisinage;
-	vector<vector<int>> mouvement_Voisinage;
 
 	MetaHeuristiques* metaheuristique = new MetaHeuristiques(instance);
 
@@ -147,8 +150,6 @@ int Resolution(Instance* instance)
 	cout << endl;
 
 	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
-
-	*uneSolution = metaheuristique->generer_Solution_Aleatoire();
 
 	i_val_Retour_Fct_obj = uneSolution->i_valeur_fonction_objectif;
 	delete uneSolution;
