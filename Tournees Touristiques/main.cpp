@@ -130,7 +130,7 @@ int Resolution(Instance* instance)
 
 	MetaHeuristiques* metaheuristique = new MetaHeuristiques(instance);
 
-	*uneSolution = metaheuristique->methode_MetaHeuristiques();
+	*uneSolution = metaheuristique->recherche_Tabou();
 
 	cout << "Solution metaheuristique : " << endl;
 

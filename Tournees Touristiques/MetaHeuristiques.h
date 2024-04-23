@@ -21,7 +21,7 @@ public:
 	MetaHeuristiques(Instance* instance_Param);
 	// Faire le destructeur ( promis on le fait )
 
-	Solution methode_MetaHeuristiques();
+	Solution recherche_Tabou();
 
 	void generer_Voisinage(Solution solution, vector<Solution>* solution_Voisinage, vector<vector<int>>* mouvement_Voisinage);
 	void generer_Voisinage_Operateur_SWAP_Hotel(Solution solution, vector<Solution>* solution_Voisinage, vector<vector<int>>* mouvement_Voisinage);
@@ -37,7 +37,7 @@ public:
 
 	bool is_Mouvement_Dans_Liste_Tabou(vector<int> mouvement, vector<vector<int>> liste_Tabou);
 
-	void ajouter_POI_Solution();
+	void ajouter_POI_Solution(Solution* solution_Aleatoire, int num_Jour, int id_POI);
 };
 
 #endif
