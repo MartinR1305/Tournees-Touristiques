@@ -101,27 +101,25 @@ int Resolution(Instance* instance)
 	uneSolution->i_valeur_fonction_objectif = 816;
 	 */
 
-	//cout << "Solution heuristique : " << endl;
+	cout << "Solution heuristique : " << endl;
 
-	//cout << "Hotel : ";
-	//for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
-	//	cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
-	//cout << endl;
+	cout << "Hotel : ";
+	for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
+		cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
+	cout << endl;
 
-	//cout << "POI : ";
-	//for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
-	//	cout << "{ ";
-	//	for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
-	//		cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
-	//	}
-	//	cout << " } ";
-	//}
-	//cout << endl;
-	//cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
+	cout << "POI : ";
+	for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
+		cout << "{ ";
+		for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
+			cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
+		}
+		cout << " } ";
+	}
+	cout << endl;
+	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
 
-	cout << "Vérif : " << uneSolution->Verification_Solution(instance) << endl;
-
-	//uneSolution->Verification_Solution(instance);
+	uneSolution->Verification_Solution(instance);
 
 	//MetaHeuristiques* metaheuristique = new MetaHeuristiques(instance);
 
