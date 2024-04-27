@@ -11,7 +11,7 @@ Solution::~Solution()
 
 }
 
-bool Solution::Verification_Solution(Instance* instance)
+bool Solution::Verification_Solution(Instance* instance, bool affiche_Message_Erreur)
 {
     bool b_solution_ok = true;
     int i, j, i_score;
@@ -21,21 +21,27 @@ bool Solution::Verification_Solution(Instance* instance)
     //Vérification des Ids Hôtel et la taille du tableau associé
     if (v_Id_Hotel_Intermedaire.size() != (instance->get_Nombre_Jour() - 1))
     {
-        cout << "Erreur : Nombre d'hôtels de v_Id_Hotel_Intermedaire. " << endl;
+        if(affiche_Message_Erreur)
+            cout << "Erreur : Nombre d'hôtels de v_Id_Hotel_Intermedaire. " << endl;
+
         b_solution_ok = false;
     }
     for (i = 0; i < v_Id_Hotel_Intermedaire.size(); i++)
     {
         if ((v_Id_Hotel_Intermedaire[i] < 0) || (v_Id_Hotel_Intermedaire[i] >= instance->get_Nombre_Hotel()))
         {
-            cout << "Erreur : Id hôtel dans v_Id_Hotel_Intermedaire (" << i << ") : " << v_Id_Hotel_Intermedaire[i] << "." << endl;
+            if (affiche_Message_Erreur)
+                cout << "Erreur : Id hôtel dans v_Id_Hotel_Intermedaire (" << i << ") : " << v_Id_Hotel_Intermedaire[i] << "." << endl;
+
             b_solution_ok = false;
         }
     }
     //Vérification des Ids POIs (et unicité) et la taille du tableau associé
     if (v_v_Sequence_Id_Par_Jour.size() != (instance->get_Nombre_Jour()))
     {
-        cout << "Erreur : La taille de la première dimension de v_v_Sequence_Id_Par_Jour doit être égale au nombre de jour. " << endl;
+        if (affiche_Message_Erreur)
+            cout << "Erreur : La taille de la première dimension de v_v_Sequence_Id_Par_Jour doit être égale au nombre de jour. " << endl;
+
         b_solution_ok = false;
     }
     for (i = 0; i < v_v_Sequence_Id_Par_Jour.size(); i++)
@@ -44,7 +50,9 @@ bool Solution::Verification_Solution(Instance* instance)
         {
             if ((v_v_Sequence_Id_Par_Jour[i][j] < 0) || (v_v_Sequence_Id_Par_Jour[i][j] >= instance->get_Nombre_POI()))
             {
-                cout << "Erreur : Id POI dans v_v_Sequence_Id_Par_Jour (" << i << "," << j << ") : " << v_v_Sequence_Id_Par_Jour[i][j] << "." << endl;
+                if (affiche_Message_Erreur)
+                    cout << "Erreur : Id POI dans v_v_Sequence_Id_Par_Jour (" << i << "," << j << ") : " << v_v_Sequence_Id_Par_Jour[i][j] << "." << endl;
+
                 b_solution_ok = false;
             }
             else
@@ -56,7 +64,9 @@ bool Solution::Verification_Solution(Instance* instance)
                 }
                 else
                 {
-                    cout << "Erreur : le POI " << v_v_Sequence_Id_Par_Jour[i][j] << " est visité plsuieurs fois dans la solution. " << endl;
+                    if (affiche_Message_Erreur)
+                        cout << "Erreur : le POI " << v_v_Sequence_Id_Par_Jour[i][j] << " est visité plsuieurs fois dans la solution. " << endl;
+
                     b_solution_ok = false;
                 }
             }
@@ -65,14 +75,18 @@ bool Solution::Verification_Solution(Instance* instance)
     //Vérification des dates de départs et la taille du tableau associé
     if (v_Date_Depart.size() != (instance->get_Nombre_Jour()))
     {
-        cout << "Erreur : Nombre de date de départ de v_Date_Depart. " << endl;
+        if (affiche_Message_Erreur)
+            cout << "Erreur : Nombre de date de départ de v_Date_Depart. " << endl;
+
         b_solution_ok = false;
     }
     for (i = 0; i < v_Date_Depart.size(); i++)
     {
         if ((v_Date_Depart[i] < 0) || (v_Date_Depart[i] >= 100000))
         {
-            cout << "Erreur : date de départ dans v_Date_Depart (" << i << ") : " << v_Date_Depart[i] << "." << endl;
+            if (affiche_Message_Erreur)
+                cout << "Erreur : date de départ dans v_Date_Depart (" << i << ") : " << v_Date_Depart[i] << "." << endl;
+
             b_solution_ok = false;
         }
     }
@@ -95,7 +109,9 @@ bool Solution::Verification_Solution(Instance* instance)
                 {
                     if (f_date > instance->get_POI_Heure_fermeture(v_v_Sequence_Id_Par_Jour[i][j]))
                     {
-                        cout << "Erreur : arrivé après la fermeture du POI " << v_v_Sequence_Id_Par_Jour[i][j] << ", heure : " << f_date << "." << endl;
+                        if (affiche_Message_Erreur)
+                            cout << "Erreur : arrivé après la fermeture du POI " << v_v_Sequence_Id_Par_Jour[i][j] << ", heure : " << f_date << "." << endl;
+
                         b_solution_ok = false;
                     }
                 }
@@ -111,7 +127,9 @@ bool Solution::Verification_Solution(Instance* instance)
                 f_date = f_date + instance->get_distance_Hotel_POI(v_Id_Hotel_Intermedaire[i], v_v_Sequence_Id_Par_Jour[i][j - 1]);
             if ((f_date - v_Date_Depart[i]) > instance->get_POI_Duree_Max_Voyage(i))
             {
-                cout << "Erreur : durée max du jour " << i << " dépassée puisqu'elle dure : " << (f_date - v_Date_Depart[i]) << "." << endl;
+                if (affiche_Message_Erreur)
+                    cout << "Erreur : durée max du jour " << i << " dépassée puisqu'elle dure : " << (f_date - v_Date_Depart[i]) << "." << endl;
+
                 b_solution_ok = false;
             }
         }
@@ -140,7 +158,9 @@ bool Solution::Verification_Solution(Instance* instance)
             f_date = f_date + instance->get_distance_Hotel_Hotel(i_ID_depart, i_ID_Arrivee);
             if ((f_date - v_Date_Depart[i]) > instance->get_POI_Duree_Max_Voyage(i))
             {
-                cout << "Erreur : durée max du jour " << i << " dépassée puisqu'elle dure : " << (f_date - v_Date_Depart[i]) << "." << endl;
+                if (affiche_Message_Erreur)
+                    cout << "Erreur : durée max du jour " << i << " dépassée puisqu'elle dure : " << (f_date - v_Date_Depart[i]) << "." << endl;
+
                 b_solution_ok = false;
             }
         }
@@ -148,7 +168,9 @@ bool Solution::Verification_Solution(Instance* instance)
     //Vérification de la fonction objectif
     if (i_score != i_valeur_fonction_objectif)
     {
-        cout << "Erreur : la fonction objectif est mal calculée, cela devrait être : " << i_score << "." << endl;
+        if (affiche_Message_Erreur)
+            cout << "Erreur : la fonction objectif est mal calculée, cela devrait être : " << i_score << "." << endl;
+
         b_solution_ok = false;
     }
 

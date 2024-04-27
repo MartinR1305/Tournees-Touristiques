@@ -19,7 +19,7 @@ public:
     /* Constructeurs et destructeur  */
     Solution();
     virtual ~Solution();
-    bool Verification_Solution(Instance* instance);
+    bool Verification_Solution(Instance* instance, bool affiche_Message_Erreur);
 };
 
 #endif

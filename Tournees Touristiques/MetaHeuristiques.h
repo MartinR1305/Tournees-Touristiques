@@ -15,6 +15,7 @@ class MetaHeuristiques
 {
 private:
 	Instance* instance;
+	Solution* solution;
 
 public:
 

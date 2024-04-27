@@ -1,5 +1,5 @@
 #define CHEMIN_DOSSIER_DONNEES "../Format Etudiant Public/"
-#define NOM_FICHIER_LISTE_FICHIER_DONNEES "ALLdata.txt"
+#define NOM_FICHIER_LISTE_FICHIER_DONNEES "data.txt"
 #define NOM_FICHIER_LISTE_SORTIE "sortie.txt"
 
 #include <iostream>
@@ -119,30 +119,30 @@ int Resolution(Instance* instance)
 	cout << endl;
 	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
 
-	uneSolution->Verification_Solution(instance);
+	uneSolution->Verification_Solution(instance, true);
 
-	//MetaHeuristiques* metaheuristique = new MetaHeuristiques(instance);
+	MetaHeuristiques* metaheuristique = new MetaHeuristiques(instance);
 
-	//*uneSolution = metaheuristique->recherche_Tabou();
+	*uneSolution = metaheuristique->recherche_Tabou();
 
-	//cout << "Solution metaheuristique : " << endl;
+	cout << "Solution metaheuristique : " << endl;
 
-	//cout << "Hotel : ";
-	//for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
-	//	cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
-	//cout << endl;
+	cout << "Hotel : ";
+	for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
+		cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
+	cout << endl;
 
-	//cout << "POI : ";
-	//for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
-	//	cout << "{ ";
-	//	for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
-	//		cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
-	//	}
-	//	cout << " } ";
-	//}
-	//cout << endl;
+	cout << "POI : ";
+	for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
+		cout << "{ ";
+		for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
+			cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
+		}
+		cout << " } ";
+	}
+	cout << endl;
 
-	//cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
+	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
 
 	i_val_Retour_Fct_obj = uneSolution->i_valeur_fonction_objectif;
 	delete uneSolution;

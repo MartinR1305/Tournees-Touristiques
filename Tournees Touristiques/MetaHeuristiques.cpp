@@ -1,6 +1,6 @@
 #include "MetaHeuristiques.h"
 
-#define NB_MINUTES 3
+#define NB_MINUTES 1
 
 /* METAHEURISTIQUES : Constructeur par défaut.
  *
@@ -11,6 +11,7 @@
 */
 MetaHeuristiques::MetaHeuristiques() {
 	instance = new Instance();
+	solution = new Solution();
 }
 
 /* METAHEURISTIQUES : Constructeur de confort.
@@ -22,6 +23,7 @@ MetaHeuristiques::MetaHeuristiques() {
 */
 MetaHeuristiques::MetaHeuristiques(Instance* instance_Param) {
 	instance = instance_Param;
+	solution = new Solution();
 }
 
 /* ~METAHEURISTIQUES : Destructeur.
@@ -43,11 +45,10 @@ MetaHeuristiques::~MetaHeuristiques() {
 */
 Solution MetaHeuristiques::recherche_Tabou() {
 
-	Solution meilleure_Solution;
 	Heuristiques* heuristique = new Heuristiques(instance);
 
 	// Calcul de la solution initiale à partir de l'heuristique.
-	meilleure_Solution = heuristique->heuristique_V2();
+	*solution = heuristique->heuristique_V2();
 
 	vector<vector<int>> liste_Tabou;
 	vector<Solution> solution_Voisinage;
@@ -57,7 +58,7 @@ Solution MetaHeuristiques::recherche_Tabou() {
 	int taille_Liste_Tabou = 5000;
 
 	Solution solution_Actuel;
-	solution_Actuel = meilleure_Solution;
+	solution_Actuel = *solution;
 
 	// Durée maximale (3 minutes)
 	auto start = chrono::steady_clock::now();
@@ -99,11 +100,11 @@ Solution MetaHeuristiques::recherche_Tabou() {
 			}
 
 			// On regarde si cette meilleure soluton a une meilleur F.O que la solution ou une F.O proche.
-			if (solution_Voisinage[indice_Meilleure_Solution].i_valeur_fonction_objectif > meilleure_Solution.i_valeur_fonction_objectif) {
+			if (solution_Voisinage[indice_Meilleure_Solution].i_valeur_fonction_objectif > solution->i_valeur_fonction_objectif) {
 
 				// On prends donc la meilleur solution.
-				meilleure_Solution = solution_Voisinage[indice_Meilleure_Solution];
-				solution_Actuel = meilleure_Solution;
+				*solution = solution_Voisinage[indice_Meilleure_Solution];
+				solution_Actuel = *solution;
 
 				// Phase d'intensification.
 				taille_Liste_Tabou = 500;
@@ -142,7 +143,7 @@ Solution MetaHeuristiques::recherche_Tabou() {
 			taille_Liste_Tabou = 10000;
 		}
 	}
-	return meilleure_Solution;
+	return *solution;
 }
 
 
@@ -187,7 +188,7 @@ void MetaHeuristiques::generer_Voisinage_Operateur_SWAP_Hotel(Solution solution_
 				solution_Temporaire.v_Id_Hotel_Intermedaire[num_Jour] = id_Hotel;
 
 				// On vérifie que la solution est réalisable.
-				if (solution_Temporaire.Verification_Solution(instance)) {
+				if (solution_Temporaire.Verification_Solution(instance, false)) {
 
 					// Mouvement de la solution. Le premier élément est un 0 afin de différencier les mouvements "Swap Hotel" et "Swap POI".
 					vector<int> mouvement = { 0 , solution_Actuel.v_Id_Hotel_Intermedaire[num_Jour] , id_Hotel , num_Jour };
@@ -217,24 +218,49 @@ void MetaHeuristiques::generer_Voisinage_Operateur_Ajouter_POI(Solution solution
 		// On parcours tous les POI de l'instance.
 		for (int id_POI_Instance = 0; id_POI_Instance < instance->get_Nombre_POI(); id_POI_Instance++) {
 
-			// On crée la solution à partir de la solution initiale.
-			Solution solution_Temporaire = solution_Actuel;
+			// Pour chaque position où l'on peut ajouter le POI.
+			for (int position = 0; position < solution_Actuel.v_v_Sequence_Id_Par_Jour.size(); position++) {
+				// On crée la solution à partir de la solution initiale.
+				Solution solution_Temporaire = solution_Actuel;
 
-			// On switch le POI.
-			solution_Temporaire.v_v_Sequence_Id_Par_Jour[num_Jour].push_back(id_POI_Instance);
+				// On switch le POI.
+				solution_Temporaire.v_v_Sequence_Id_Par_Jour[num_Jour].push_back(id_POI_Instance);
 
-			// On mets à jour la F.O.
-			solution_Temporaire.i_valeur_fonction_objectif += instance->get_POI_Score(id_POI_Instance);
+				// On mets à jour la F.O.
+				solution_Temporaire.i_valeur_fonction_objectif += instance->get_POI_Score(id_POI_Instance);
 
-			// On vérifie que la solution est réalisable.
-			if (solution_Temporaire.Verification_Solution(instance)) {
+				// On doit changer la date de départ si l'on a ajouté le POI en 1ere position.
+				if (position == 0) {
+					float heure_Ouverture = instance->get_POI_Heure_ouverture(id_POI_Instance);
+					float heure_Fermeture = instance->get_POI_Heure_fermeture(id_POI_Instance);
 
-				// Mouvement de la solution, ce mouvement ne sera cepedant jamasi dans la liste tabou par logique.
-				vector<int> mouvement = { id_POI_Instance, num_Jour };
-				mouvement_Voisinage->push_back(mouvement);
+					float distance_POI_Actuel_Et_POI_Courant;
 
-				// On ajotue la solution dans le voisinage.
-				solution_Voisinage->push_back(solution_Temporaire);
+					if (num_Jour != 0) {
+						distance_POI_Actuel_Et_POI_Courant = instance->get_distance_Hotel_POI(solution_Actuel.v_Id_Hotel_Intermedaire[num_Jour - 1], id_POI_Instance);
+					}
+					else {
+						distance_POI_Actuel_Et_POI_Courant = instance->get_distance_Hotel_POI(instance->get_Id_Hotel_depart(), id_POI_Instance);
+					}
+
+					if (heure_Ouverture - distance_POI_Actuel_Et_POI_Courant >= 0) {
+						solution_Temporaire.v_Date_Depart[num_Jour] = heure_Ouverture - distance_POI_Actuel_Et_POI_Courant;
+					}
+					else {
+						solution_Temporaire.v_Date_Depart[num_Jour] = heure_Fermeture - distance_POI_Actuel_Et_POI_Courant;
+					}
+				}
+
+				// On vérifie que la solution est réalisable.
+				if (solution_Temporaire.Verification_Solution(instance, false)) {
+
+					// Mouvement de la solution, ce mouvement ne sera cepedant jamasi dans la liste tabou par logique.
+					vector<int> mouvement = { position, id_POI_Instance, num_Jour };
+					mouvement_Voisinage->push_back(mouvement);
+
+					// On ajotue la solution dans le voisinage.
+					solution_Voisinage->push_back(solution_Temporaire);
+				}
 			}
 		}
 	}
@@ -295,7 +321,7 @@ void MetaHeuristiques::generer_Voisinage_Operateur_SWAP_POI(Solution solution_Ac
 					}
 
 					// On vérifie que la solution est réalisable.
-					if (solution_Temporaire.Verification_Solution(instance)) {
+					if (solution_Temporaire.Verification_Solution(instance, false)) {
 
 						// Mouvement de la solution. Le premier élément est un 1 afin de différencier les mouvements "Swap Hotel" et "Swap POI".
 						vector<int> mouvement = { 1 , solution_Actuel.v_v_Sequence_Id_Par_Jour[num_Jour][indice_POI_Solution] , id_POI_Instance , num_Jour };
@@ -358,7 +384,6 @@ bool MetaHeuristiques::is_Mouvement_Dans_Liste_Tabou(vector<int> mouvement, vect
 	return false;
 }
 
-
 /* REMPLACER_PLUS_ANCIEN_MOUVEMENT : Permets de supprimer le plus ancien mouvement de la liste tabou et d'ajouter un mouvement.
 * Entrée : - liste_Tabou, vector<vector<int>>*, pointeur vers la liste tabou que l'on veut modifier.
 *		   - mouvement_Tabou, vector<int>, mouvement que l'on veut ajouter à la liste tabou.
@@ -390,7 +415,7 @@ Solution MetaHeuristiques::generer_Solution_Aleatoire() {
 	uniform_int_distribution<> dis_POI(0, instance->get_Nombre_POI() - 1);
 
 	// Tant que l'on a pas de solution faisable on en recrée une.
-	while (!solution_Aleatoire.Verification_Solution(instance)) {
+	while (!solution_Aleatoire.Verification_Solution(instance, false)) {
 
 		// On vide la solution.
 		solution_Aleatoire.v_Id_Hotel_Intermedaire.clear();
@@ -454,7 +479,7 @@ Solution MetaHeuristiques::generer_Solution_Reset_Jour_Score_Min(Solution soluti
 
 		ajouter_POI_Solution(&solution_Modif, num_Jour_Score_Min, id_POI);
 
-		if (!solution_Modif.Verification_Solution(instance));
+		if (!solution_Modif.Verification_Solution(instance, false));
 			return solution_Modif;
 		}
 }
