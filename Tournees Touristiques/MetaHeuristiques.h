@@ -22,7 +22,7 @@ public:
 	 * Entrée : Rien.
 	 * Nécessite : Rien.
 	 * Sortie : Rien.
-	 * Entraîne : Crée un objet de la classe MetaHeuristiques avec un pointeur d'instance null.
+	 * Entraîne : Crée un objet de la classe MetaHeuristiques en l'initialisant avec des valeurs par défaut.
 	*/
 	MetaHeuristiques();
 

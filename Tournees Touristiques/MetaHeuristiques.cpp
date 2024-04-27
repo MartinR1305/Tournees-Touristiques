@@ -7,7 +7,7 @@
  * Entrée : Rien.
  * Nécessite : Rien.
  * Sortie : Rien.
- * Entraîne : Crée un objet de la classe MetaHeuristiques avec un pointeur d'instance null.
+	 * Entraîne : Crée un objet de la classe MetaHeuristiques en l'initialisant avec des valeurs par défaut.
 */
 MetaHeuristiques::MetaHeuristiques() {
 	instance = new Instance();
@@ -47,7 +47,7 @@ Solution MetaHeuristiques::recherche_Tabou() {
 	Heuristiques* heuristique = new Heuristiques(instance);
 
 	// Calcul de la solution initiale à partir de l'heuristique.
-	meilleure_Solution = heuristique->methode_Heuristique();
+	meilleure_Solution = heuristique->heuristique_V2();
 
 	vector<vector<int>> liste_Tabou;
 	vector<Solution> solution_Voisinage;
@@ -106,21 +106,21 @@ Solution MetaHeuristiques::recherche_Tabou() {
 				solution_Actuel = meilleure_Solution;
 
 				// Phase d'intensification.
-				taille_Liste_Tabou = 10;
+				taille_Liste_Tabou = 500;
 				liste_Tabou.clear();
 				ite = 0;
 			}
 
 			// Cas où la meilleure solution du voisinage n'a pas une meilleure F.O que la solution.
 			else {
-				if (ite > 250) {
+				if (ite > 500) {
 					// Phase de diversification totale.
 					solution_Actuel = generer_Solution_Aleatoire();
 					taille_Liste_Tabou = 10000;
 					ite = 0;
 				}
 
-				else if (ite > 150) {
+				else if (ite > 200) {
 
 					// Phase de diversification moyenne.
 					solution_Actuel = generer_Solution_Reset_Jour_Score_Min(solution_Voisinage[indice_Meilleure_Solution]);
