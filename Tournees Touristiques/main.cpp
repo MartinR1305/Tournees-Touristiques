@@ -1,5 +1,5 @@
 #define CHEMIN_DOSSIER_DONNEES "../Format Etudiant Public/"
-#define NOM_FICHIER_LISTE_FICHIER_DONNEES "data.txt"
+#define NOM_FICHIER_LISTE_FICHIER_DONNEES "ALLdata.txt"
 #define NOM_FICHIER_LISTE_SORTIE "sortie.txt"
 
 #include <iostream>
@@ -85,9 +85,6 @@ int Resolution(Instance* instance)
 	int i_val_Retour_Fct_obj = 0;
 	Solution* uneSolution = new Solution();
 	vector<int> v_i_tmp;
-	Heuristiques* heuristique = new Heuristiques(instance);
-	*uneSolution = heuristique->heuristique_V2();
-	delete heuristique;
 
 	/*INITIALISATION D'UN SOLUTION EN DUR
 	v_i_tmp.clear();
@@ -101,50 +98,10 @@ int Resolution(Instance* instance)
 	uneSolution->i_valeur_fonction_objectif = 816;
 	 */
 
-	cout << "Solution heuristique : " << endl;
-
-	cout << "Hotel : ";
-	for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
-		cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
-	cout << endl;
-
-	cout << "POI : ";
-	for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
-		cout << "{ ";
-		for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
-			cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
-		}
-		cout << " } ";
-	}
-	cout << endl;
-	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
-
-	uneSolution->Verification_Solution(instance, true);
-
 	MetaHeuristiques* metaheuristique = new MetaHeuristiques(instance);
-
 	*uneSolution = metaheuristique->recherche_Tabou();
-
-	cout << "Solution metaheuristique : " << endl;
-
-	cout << "Hotel : ";
-	for (int i = 0; i < uneSolution->v_Id_Hotel_Intermedaire.size(); i++)
-		cout << "[ " << uneSolution->v_Id_Hotel_Intermedaire[i] << " ]";
-	cout << endl;
-
-	cout << "POI : ";
-	for (int i = 0; i < instance->get_Nombre_Jour(); i++) {
-		cout << "{ ";
-		for (int j = 0; j < uneSolution->v_v_Sequence_Id_Par_Jour[i].size(); j++) {
-			cout << "[ " << uneSolution->v_v_Sequence_Id_Par_Jour[i][j] << " ]";
-		}
-		cout << " } ";
-	}
-	cout << endl;
-
-	cout << "F.O : " << uneSolution->i_valeur_fonction_objectif << endl << endl;
-
 	i_val_Retour_Fct_obj = uneSolution->i_valeur_fonction_objectif;
+
 	delete uneSolution;
 	return i_val_Retour_Fct_obj;
 }

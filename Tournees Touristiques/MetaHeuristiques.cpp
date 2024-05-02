@@ -1,6 +1,6 @@
 #include "MetaHeuristiques.h"
 
-#define NB_MINUTES 1
+#define NB_MINUTES 2
 
 /* METAHEURISTIQUES : Constructeur par défaut.
  *
